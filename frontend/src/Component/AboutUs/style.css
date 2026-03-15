@@ -1,0 +1,10 @@
+.page{
+background:white;
+padding:40px;
+border-radius:8px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+.page h1{
+margin-bottom:20px;
+}

@@ -1,105 +1,56 @@
 .navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 60px;
+height:60px;
 background: linear-gradient(90deg,#11998e,#38ef7d);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
 color:white;
-box-shadow:0px 4px 10px rgba(0,0,0,0.2);
-position:relative;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
 .logo{
-font-size:24px;
+font-size:20px;
 font-weight:bold;
-letter-spacing:1px;
 }
 
-.nav-links{
-display:flex;
-list-style:none;
-gap:30px;
-}
-
-.nav-links a{
-text-decoration:none;
-color:white;
-font-size:16px;
-transition:0.3s;
-}
-
-.nav-links a:hover{
-color:#ffd54f;
-}
-
-.nav-buttons button{
-margin-left:10px;
-padding:8px 18px;
+.menu-btn{
+font-size:22px;
+background:none;
 border:none;
-border-radius:20px;
+color:white;
 cursor:pointer;
-font-weight:500;
-}
-
-.login{
-background:white;
-color:#2e7d32;
-}
-
-.register{
-background:#ffd54f;
-color:black;
-}
-
-/* Hamburger menu icon */
-
-.menu-icon{
 display:none;
-font-size:28px;
+}
+
+.nav-links button{
+background:none;
+border:none;
+color:white;
+margin-left:20px;
+font-size:16px;
 cursor:pointer;
 }
 
-/* Tablet */
-
-@media (max-width:900px){
-
-.navbar{
-padding:15px 30px;
-}
-
-.nav-links{
-gap:20px;
-}
-
+.nav-links button.active{
+border-bottom:2px solid white;
 }
 
 /* Mobile */
 
-@media (max-width:768px){
-
-.menu-icon{
-display:block;
-}
+@media(max-width:768px){
 
 .nav-links{
-position:absolute;
-top:70px;
-left:0;
-width:100%;
-background:#11998e;
-flex-direction:column;
-align-items:center;
-gap:20px;
-padding:20px 0;
 display:none;
 }
 
-.nav-links.active{
-display:flex;
-}
-
-.nav-buttons{
-display:none;
+.menu-btn{
+display:block;
 }
 
 }

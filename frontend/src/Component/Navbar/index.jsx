@@ -1,31 +1,35 @@
-import React from 'react'
-import './style.css'
+import React from "react";
+import "./style.css";
 
-const Navbar = () => {
+const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
   return (
-<>
- <nav className="navbar">
+    <nav className="navbar">
+      <div className="nav-left">
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          ☰
+        </button>
 
-      <div className="logo">
-        AgroTrade
+        <div className="logo">🌾 AgroTrade</div>
       </div>
 
-      <ul className="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Products</a></li>
-        <li><a href="#">Farmers</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
+      {/* Desktop Navigation */}
+      <div className="nav-links">
+        <button
+          className={navSelection === "About" ? "active" : ""}
+          onClick={() => setNavSelection("About")}
+        >
+          About Us
+        </button>
 
-      <div className="nav-buttons">
-        <button className="login">Login</button>
-        <button className="register">Register</button>
+        <button
+          className={navSelection === "Contact" ? "active" : ""}
+          onClick={() => setNavSelection("Contact")}
+        >
+          Contact
+        </button>
       </div>
-
     </nav>
-</>
-  )
-}
+  );
+};
 
-export default Navbar;          
+export default Navbar;

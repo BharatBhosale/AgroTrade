@@ -9,11 +9,20 @@ const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
           ☰
         </button>
 
-        <div className="logo">🌾 AgroTrade</div>
+        <div className="logo" onClick={() => setNavSelection("Home")}>
+          🌾 AgroTrade
+        </div>
       </div>
 
-      {/* Desktop Navigation */}
       <div className="nav-links">
+
+        <button
+          className={navSelection === "Home" ? "active" : ""}
+          onClick={() => setNavSelection("Home")}
+        >
+          Home
+        </button>
+
         <button
           className={navSelection === "About" ? "active" : ""}
           onClick={() => setNavSelection("About")}
@@ -27,6 +36,7 @@ const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
         >
           Contact
         </button>
+
       </div>
     </nav>
   );

@@ -31,6 +31,12 @@ const Sidebar = ({ open, setSidebarOpen, navSelection, setNavSelection }) => {
       >
         Contact
       </button>
+      <button
+        className={navSelection === "Home" ? "active" : ""}
+        onClick={() => handleClick("Home")}
+      >
+        Home
+      </button>
 
     </div>
   );

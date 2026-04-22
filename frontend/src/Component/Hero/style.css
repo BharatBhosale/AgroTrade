@@ -1,0 +1,39 @@
+.hero {
+  text-align: center;
+  padding: 90px 20px;
+  background: linear-gradient(135deg, #d9f3ea, #a8e6cf);
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 600;
+}
+
+.hero p {
+  max-width: 650px;
+  margin: 15px auto;
+  color: #555;
+}
+
+.hero-buttons {
+  margin-top: 25px;
+}
+
+.btn {
+  padding: 12px 22px;
+  border-radius: 6px;
+  border: none;
+  margin: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.farmer {
+  background: #16a34a;
+  color: white;
+}
+
+.trader {
+  background: #2563eb;
+  color: white;
+}

@@ -127,3 +127,18 @@ textarea {
   border: 1px solid #ccc;
   box-sizing: border-box;  
 }
+.login-text {
+  margin-top: 15px;
+  font-size: 15px;
+  color: #444;
+}
+
+.login-link {
+  color: #16a34a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}

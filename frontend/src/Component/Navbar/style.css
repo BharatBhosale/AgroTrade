@@ -1,11 +1,16 @@
-.navbar{
-height:60px;
-background: linear-gradient(90deg,#11998e,#38ef7d);
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-color:white;
+.navbar {
+  position: fixed;   /* 🔥 main line */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  background: linear-gradient(to right, #16a34a, #22c55e);
+  color: white;
 }
 
 .nav-left{
@@ -14,9 +19,15 @@ align-items:center;
 gap:10px;
 }
 
-.logo{
-font-size:20px;
-font-weight:bold;
+
+/* logo text fix */
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+  color: white !important;   
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .menu-btn{

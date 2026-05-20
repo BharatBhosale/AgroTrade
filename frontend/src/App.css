@@ -7,3 +7,8 @@ background:#f5f7fa;
 .main-content{
 padding:40px;
 }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

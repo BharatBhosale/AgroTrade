@@ -36,7 +36,13 @@ const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
         >
           Contact
         </button>
-
+        <button
+          className={navSelection === "Login" ? "active" : ""}
+          onClick={() => setNavSelection("Login")}
+        >
+          Login
+        </button>
+      
       </div>
     </nav>
   );

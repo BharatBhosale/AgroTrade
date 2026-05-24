@@ -1,7 +1,13 @@
 import React from "react";
 import "./style.css";
 
-const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
+const Navbar = ({
+  navSelection,
+  setNavSelection,
+  setSidebarOpen,
+  user,
+  handleLogout,
+}) => {
   return (
     <nav className="navbar">
       <div className="nav-left">
@@ -9,41 +15,55 @@ const Navbar = ({ navSelection, setNavSelection, setSidebarOpen }) => {
           ☰
         </button>
 
-        <div className="logo" onClick={() => setNavSelection("Home")}>
+        <div
+          className="logo"
+          onClick={() =>
+            user ? setNavSelection("Dashboard") : setNavSelection("Home")
+          }
+        >
           🌾 AgroTrade
         </div>
       </div>
 
-      <div className="nav-links">
+      {user ? (
+        // Logged-in user navbar
+        <div className="nav-user-info">
+          <span className="user-name">{user.full_name || "User"}</span>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      ) : (
+        // Not logged-in navbar
+        <div className="nav-links">
+          <button
+            className={navSelection === "Home" ? "active" : ""}
+            onClick={() => setNavSelection("Home")}
+          >
+            Home
+          </button>
 
-        <button
-          className={navSelection === "Home" ? "active" : ""}
-          onClick={() => setNavSelection("Home")}
-        >
-          Home
-        </button>
+          <button
+            className={navSelection === "About" ? "active" : ""}
+            onClick={() => setNavSelection("About")}
+          >
+            About Us
+          </button>
 
-        <button
-          className={navSelection === "About" ? "active" : ""}
-          onClick={() => setNavSelection("About")}
-        >
-          About Us
-        </button>
-
-        <button
-          className={navSelection === "Contact" ? "active" : ""}
-          onClick={() => setNavSelection("Contact")}
-        >
-          Contact
-        </button>
-        <button
-          className={navSelection === "Login" ? "active" : ""}
-          onClick={() => setNavSelection("Login")}
-        >
-          Login
-        </button>
-      
-      </div>
+          <button
+            className={navSelection === "Contact" ? "active" : ""}
+            onClick={() => setNavSelection("Contact")}
+          >
+            Contact
+          </button>
+          <button
+            className={navSelection === "Login" ? "active" : ""}
+            onClick={() => setNavSelection("Login")}
+          >
+            Login
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

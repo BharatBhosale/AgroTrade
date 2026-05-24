@@ -1,0 +1,169 @@
+.page{
+  min-height:100vh;
+  background:#f0fdf4;
+  padding:30px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.title{
+  font-size:36px;
+  font-weight:bold;
+  color:#166534;
+}
+
+.backBtn{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.backBtn:hover{
+  background:#1d4ed8;
+}
+
+.profileCard{
+  background:white;
+  border-radius:20px;
+  padding:35px;
+  max-width:900px;
+  margin:auto;
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.08);
+}
+
+.profileHeader{
+  display:flex;
+  align-items:center;
+  gap:25px;
+  margin-bottom:35px;
+}
+
+.avatar{
+  width:100px;
+  height:100px;
+  background:#16a34a;
+  color:white;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:45px;
+}
+
+.profileInfo h2{
+  font-size:30px;
+  color:#111827;
+}
+
+.profileInfo p{
+  color:#6b7280;
+  margin-top:5px;
+  font-size:18px;
+}
+
+.profileFields{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+
+  gap:25px;
+}
+
+.profileFields div{
+  display:flex;
+  flex-direction:column;
+}
+
+.profileFields label{
+  font-weight:bold;
+  margin-bottom:8px;
+  color:#374151;
+}
+
+.profileFields input{
+  padding:14px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  font-size:16px;
+  outline:none;
+  transition:0.3s;
+}
+
+.profileFields input:focus{
+  border-color:#16a34a;
+}
+
+.profileActions{
+  margin-top:35px;
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.green{
+  background:#16a34a;
+  color:white;
+  border:none;
+  padding:14px 22px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.green:hover{
+  background:#15803d;
+}
+
+.blue{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:14px 22px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.blue:hover{
+  background:#1d4ed8;
+}
+
+@media(max-width:768px){
+
+  .header{
+    flex-direction:column;
+    gap:20px;
+    align-items:flex-start;
+  }
+
+  .profileHeader{
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .profileActions{
+    flex-direction:column;
+  }
+
+  .green,
+  .blue{
+    width:100%;
+  }
+
+}

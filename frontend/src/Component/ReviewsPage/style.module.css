@@ -1,0 +1,97 @@
+.page{
+  min-height:100vh;
+  background:#f0fdf4;
+  padding:30px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.title{
+  font-size:36px;
+  font-weight:bold;
+  color:#166534;
+}
+
+.backBtn{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.backBtn:hover{
+  background:#1d4ed8;
+}
+
+.card{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.08);
+}
+
+.card h2{
+  margin-bottom:20px;
+  color:#111827;
+}
+
+.card input,
+.card select,
+.card textarea{
+
+  width:100%;
+  padding:14px;
+  margin-bottom:20px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  font-size:16px;
+  outline:none;
+
+}
+
+.card textarea{
+  min-height:140px;
+  resize:none;
+}
+
+.submitBtn{
+  width:100%;
+  background:#16a34a;
+  color:white;
+  border:none;
+  padding:14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.submitBtn:hover{
+  background:#15803d;
+}
+
+@media(max-width:768px){
+
+  .header{
+    flex-direction:column;
+    gap:20px;
+    align-items:flex-start;
+  }
+
+  .title{
+    font-size:28px;
+  }
+
+}

@@ -5,6 +5,7 @@ import com.agrotrade.backend.service.TraderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/traders")
@@ -19,6 +20,11 @@ public class TraderController {
             @RequestBody Trader trader){
 
         return traderService.saveTrader(trader);
+    }
+
+    @GetMapping("/all")
+    public List<Trader> getAllTraders(){
+        return traderService.getAllTraders();
     }
 
 }

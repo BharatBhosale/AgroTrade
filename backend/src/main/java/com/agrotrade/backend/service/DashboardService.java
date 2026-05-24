@@ -2,7 +2,6 @@ package com.agrotrade.backend.service;
 
 import com.agrotrade.backend.dto.DashboardResponse;
 import com.agrotrade.backend.repository.TransactionRepository;
-import com.agrotrade.backend.repository.ReviewRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,29 +12,29 @@ public class DashboardService {
     @Autowired
     TransactionRepository transactionRepository;
 
-    @Autowired
-    ReviewRepository reviewRepository;
-
-    public DashboardResponse getDashboard(Long farmerId){
+    public DashboardResponse getDashboard(
+            Long farmerId
+    ) {
 
         DashboardResponse response =
                 new DashboardResponse();
 
+        // TOTAL TRANSACTIONS
         response.setTotalTransactions(
-                transactionRepository.countByFarmerId(farmerId)
+                transactionRepository
+                        .countByFarmerId(farmerId)
         );
 
+        // ACTIVE CONNECTIONS
         response.setActiveConnections(12L);
 
-        Double avg =
-                reviewRepository.getAverageRating(farmerId);
+        // STATIC RATING
+        response.setAverageRating(4.5);
 
-        response.setAverageRating(
-                avg != null ? avg : 0.0
-        );
-
+        // MONTHLY INCOME
         Double income =
-                transactionRepository.getMonthlyIncome(farmerId);
+                transactionRepository
+                        .getMonthlyIncome(farmerId);
 
         response.setMonthlyIncome(
                 income != null ? income : 0.0

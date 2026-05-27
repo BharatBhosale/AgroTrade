@@ -14,12 +14,21 @@ public class DashboardController {
     @Autowired
     DashboardService dashboardService;
 
-    @GetMapping("/{id}")
-    public DashboardResponse dashboard(
+    @GetMapping("/farmer/{id}")
+    public DashboardResponse farmerDashboard(
             @PathVariable Long id
     ){
 
-        return dashboardService.getDashboard(id);
+        return dashboardService.getFarmerDashboard(id);
+
+    }
+
+    @GetMapping("/trader/{id}")
+    public DashboardResponse traderDashboard(
+            @PathVariable Long id
+    ){
+
+        return dashboardService.getTraderDashboard(id);
 
     }
 }

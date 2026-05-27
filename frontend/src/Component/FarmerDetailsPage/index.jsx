@@ -1,231 +1,76 @@
-import React, {
-  useState
-} from "react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "./style.module.css";
 
-const FarmerDetailsPage = ({
-  farmer,
-  setNavSelection
-}) => {
+const FarmerDashboard = ({ setNavSelection }) => {
 
-  const [isEditing, setIsEditing] =
-    useState(false);
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
 
-  const [formData, setFormData] =
-    useState({
+  const [connections, setConnections]
+    = useState([]);
 
-      farmerName:
-        farmer.farmerName,
+  // FETCH CONNECTIONS
+  const fetchConnections = async () => {
 
-      email:
-        farmer.email,
+    try {
 
-      phone:
-        farmer.phone,
+      const response = await axios.get(
+        `http://localhost:8080/api/farmers/connections/${user.id}`
+      );
 
-      location:
-        farmer.location,
+      setConnections(response.data);
 
-      crop:
-        farmer.crop,
+    } catch (error) {
 
-      weight:
-        farmer.weight || "",
+      console.log(error);
 
-      quantity:
-        farmer.quantity || "",
-
-      price:
-        farmer.price || "",
-
-      requirement:
-        farmer.requirement || "",
-
-    });
-
-  const handleChange = (e) => {
-
-    setFormData({
-
-      ...formData,
-
-      [e.target.name]:
-        e.target.value,
-
-    });
-
+    }
   };
 
-  const handleSave = () => {
+  useEffect(() => {
 
-    alert(
-      "Farmer Details Saved ✅"
-    );
+    fetchConnections();
 
-    setIsEditing(false);
-
-  };
+  }, []);
 
   return (
-    <div className={styles.page}>
+    <div className={styles.dashboard}>
 
-      <div className={styles.header}>
+      <h1 className={styles.title}>
+        👨‍🌾 Farmer Dashboard
+      </h1>
 
-        <h1>
-          👨‍🌾 Farmer Details
-        </h1>
+      {/* CONNECTED TRADERS */}
+      <div className={styles.mlSection}>
 
-        <button
-          onClick={() =>
-            setNavSelection(
-              "TraderDashboard"
-            )
-          }
-        >
-          ← Back
-        </button>
+        <h2>Connected Traders</h2>
 
-      </div>
+        {connections.length === 0 ? (
 
-      <div className={styles.card}>
+          <p>No Connections Yet</p>
 
-        <div className={styles.grid}>
+        ) : (
 
-          <div>
-            <label>
-              Farmer Name
-            </label>
+          connections.map((item) => (
 
-            <input
-              name="farmerName"
-              value={formData.farmerName}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Email</label>
-
-            <input
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Phone</label>
-
-            <input
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Location</label>
-
-            <input
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Crop</label>
-
-            <input
-              name="crop"
-              value={formData.crop}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Weight</label>
-
-            <input
-              name="weight"
-              value={formData.weight}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Quantity</label>
-
-            <input
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div>
-            <label>Price</label>
-
-            <input
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-        </div>
-
-        <div className={styles.full}>
-
-          <label>
-            Requirement
-          </label>
-
-          <textarea
-            name="requirement"
-            value={formData.requirement}
-            onChange={handleChange}
-            disabled={!isEditing}
-          />
-
-        </div>
-
-        <div className={styles.actions}>
-
-          {!isEditing ? (
-
-            <button
-              onClick={() =>
-                setIsEditing(true)
-              }
+            <div
+              key={item.id}
+              className={styles.recCard}
             >
-              ✏ Edit
-            </button>
 
-          ) : (
+              <h3>{item.traderName}</h3>
 
-            <button
-              onClick={handleSave}
-            >
-              💾 Save
-            </button>
+              <p>🌾 {item.crop}</p>
 
-          )}
+              <p>📍 {item.location}</p>
 
-          <button>
-            📥 Download
-          </button>
+            </div>
 
-        </div>
+          ))
+
+        )}
 
       </div>
 
@@ -233,4 +78,4 @@ const FarmerDetailsPage = ({
   );
 };
 
-export default FarmerDetailsPage;
+export default FarmerDashboard;

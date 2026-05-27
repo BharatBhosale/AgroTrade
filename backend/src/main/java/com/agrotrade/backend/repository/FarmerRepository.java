@@ -11,4 +11,6 @@ extends JpaRepository<Farmer, Long>{
             String password
     );
 
+    Farmer findByEmail(String email);
+
 }

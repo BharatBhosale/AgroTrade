@@ -19,6 +19,10 @@ const TraderDashboard = ({ setNavSelection }) => {
 
   const [farmerRequests, setFarmerRequests] = useState([]);
 
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
+
+  const [rejectedRequests, setRejectedRequests] = useState([]);
+
   const [filteredFarmers, setFilteredFarmers] = useState([]);
 
   const [transactions, setTransactions] = useState([]);
@@ -31,6 +35,7 @@ const TraderDashboard = ({ setNavSelection }) => {
 
   // LOAD DATA
   useEffect(() => {
+    // FIRST LOAD
     fetchDashboardData();
 
     fetchFarmerRequests();
@@ -38,16 +43,34 @@ const TraderDashboard = ({ setNavSelection }) => {
     fetchTransactions();
 
     fetchReviews();
+
+    // AUTO REFRESH EVERY 2 SEC
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 2000);
+
+    // CLEANUP
+    return () => clearInterval(interval);
   }, []);
+
+  // Refresh farmer requests whenever Requests tab is active
+  useEffect(() => {
+    if (activeTab === "requests") fetchFarmerRequests();
+  }, [activeTab]);
 
   // DASHBOARD
   const fetchDashboardData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/trader/dashboard/${user.id}`,
+        `http://localhost:8080/api/dashboard/trader/${user.id}`,
       );
 
-      setDashboardData(response.data);
+      setDashboardData({
+        totalTransactions: response.data.totalTransactions || 0,
+        activeFarmers: response.data.activeConnections || 0,
+        averageRating: response.data.averageRating || 0,
+        monthlyRevenue: response.data.monthlyIncome || 0,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -60,9 +83,13 @@ const TraderDashboard = ({ setNavSelection }) => {
         `http://localhost:8080/api/farmer-requests/trader/${user.id}`,
       );
 
-      setFarmerRequests(response.data || []);
+      console.log("fetchFarmerRequests response:", response.data);
 
-      setFilteredFarmers(response.data || []);
+      const data = Array.isArray(response.data) ? response.data : [];
+
+      setFarmerRequests(data);
+
+      setFilteredFarmers(data);
     } catch (error) {
       console.log(error);
     }
@@ -72,10 +99,12 @@ const TraderDashboard = ({ setNavSelection }) => {
   const fetchTransactions = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/transactions/all",
+        `http://localhost:8080/api/transactions/trader/${user.id}`,
       );
 
-      setTransactions(response.data || []);
+      console.log("fetchTransactions response:", response.data);
+
+      setTransactions(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.log(error);
     }
@@ -83,26 +112,18 @@ const TraderDashboard = ({ setNavSelection }) => {
 
   // REVIEWS
   const fetchReviews = async () => {
-
-  try {
-
-    const response =
-      await axios.get(
-        `http://localhost:8080/api/reviews/trader/${user.email}`
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/reviews/trader/${user.email}`,
       );
 
-    console.log(response.data);
+      console.log(response.data);
 
-    setReviews(
-      response.data || []
-    );
-
-  } catch (error) {
-
-    console.log(error);
-
-  }
-};
+      setReviews(response.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // SEARCH
   const handleSearch = (query) => {
@@ -218,23 +239,160 @@ ${farmer.location}
 
                 <p>📍 {farmer.location}</p>
 
-                <button
-                  className={styles.contactBtn}
-                  onClick={() => {
+                <div className={styles.btnGroup}>
+                  {/* ACCEPT BUTTON HIDE AFTER ACCEPT */}
+                  {!acceptedRequests.includes(farmer.id) && (
+                    <button
+                      className={styles.acceptBtn}
+                      onClick={async () => {
+                        try {
+                          // ACCEPT REQUEST
+                          await axios.post(
+                            `http://localhost:8080/api/farmer-requests/${farmer.id}/accept`,
+                          );
 
-  localStorage.setItem(
-    "selectedFarmer",
-    JSON.stringify(farmer)
-  );
+                          // HIDE ONLY ACCEPT BUTTON
+                          setAcceptedRequests((prev) => [...prev, farmer.id]);
 
-  setNavSelection(
-    "FarmerDetails"
-  );
+                          // REFRESH DASHBOARD
+                          setDashboardData((prev) => ({
+                            ...prev,
+                            activeFarmers: prev.activeFarmers + 1,
+                          }));
 
-}}
-                >
-                  📞 Contact
-                </button>
+                          alert("Request Accepted ✅");
+                        } catch (error) {
+                          console.error(
+                            "Accept Error:",
+                            error.response?.data || error.message,
+                          );
+
+                          alert(
+                            "Error: " +
+                              (error.response?.data?.message || error.message),
+                          );
+                        }
+                      }}
+                    >
+                      ✅ Accept
+                    </button>
+                  )}
+
+                  {/* REJECT BUTTON HIDE AFTER REJECT */}
+                  {!rejectedRequests.includes(farmer.id) && (
+                    <button
+                      className={styles.rejectBtn}
+                      onClick={async () => {
+                        try {
+                          // REJECT REQUEST
+                          await axios.post(
+                            `http://localhost:8080/api/farmer-requests/${farmer.id}/reject`,
+                          );
+
+                          // HIDE ONLY REJECT BUTTON
+                          setRejectedRequests((prev) => [...prev, farmer.id]);
+
+                          // REFRESH DASHBOARD
+                          await fetchDashboardData();
+
+                          alert("Request Rejected ❌");
+                        } catch (error) {
+                          console.error(
+                            "Reject Error:",
+                            error.response?.data || error.message,
+                          );
+
+                          alert(
+                            "Error: " +
+                              (error.response?.data?.message || error.message),
+                          );
+                        }
+                      }}
+                    >
+                      ❌ Reject
+                    </button>
+                  )}
+
+                  {/* CONTACT BUTTON ALWAYS SHOW */}
+                  <button
+                    className={styles.contactBtn}
+                    onClick={() => {
+                      localStorage.setItem(
+                        "selectedFarmer",
+                        JSON.stringify(farmer),
+                      );
+
+                      setNavSelection("Transaction");
+                    }}
+                  >
+                    📞 Contact
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* TRANSACTIONS TAB */}
+      {activeTab === "transactions" && (
+        <div className={styles.section}>
+          <h2>Transactions</h2>
+
+          {transactions.length === 0 ? (
+            <p>No Transactions Found</p>
+          ) : (
+            transactions.map((tx) => (
+              <div key={tx.id} className={styles.txCard}>
+                <h3>
+                  {tx.crop} — ₹{tx.totalAmount}
+                </h3>
+
+                <p>Quantity: {tx.quantity} kg</p>
+
+                <p>Farmer ID: {tx.farmerId}</p>
+
+                <p>Status: {tx.status}</p>
+
+                <div className={styles.btnGroup}>
+                  <button
+                    className={styles.downloadBtn}
+                    onClick={() => {
+                      const slipHtml = `
+                        <html>
+                          <head>
+                            <title>Transaction Slip</title>
+                            <style>
+                              body{font-family: Arial, sans-serif; padding:20px}
+                              .card{border:1px solid #ddd;padding:20px;border-radius:8px}
+                              h2{color:#27ae60}
+                            </style>
+                          </head>
+                          <body>
+                            <div class="card">
+                              <h2>Transaction Slip</h2>
+                              <p><strong>Transaction ID:</strong> ${tx.id}</p>
+                              <p><strong>Crop:</strong> ${tx.crop}</p>
+                              <p><strong>Quantity:</strong> ${tx.quantity} kg</p>
+                              <p><strong>Rate:</strong> ₹${tx.rate}</p>
+                              <p><strong>Base Amount:</strong> ₹${tx.baseAmount}</p>
+                              <p><strong>Charges:</strong> ₹${tx.charges}</p>
+                              <p><strong>Cut:</strong> ₹${tx.cut}</p>
+                              <h3>Total: ₹${tx.totalAmount}</h3>
+                            </div>
+                          </body>
+                        </html>`;
+
+                      const win = window.open("", "_blank");
+                      win.document.write(slipHtml);
+                      win.document.close();
+                      win.focus();
+                      win.print();
+                    }}
+                  >
+                    📄 Download PDF
+                  </button>
+                </div>
               </div>
             ))
           )}

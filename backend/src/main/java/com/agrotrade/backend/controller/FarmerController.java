@@ -1,7 +1,11 @@
 package com.agrotrade.backend.controller;
 
 import com.agrotrade.backend.model.Farmer;
+import com.agrotrade.backend.model.Connection;
+
 import com.agrotrade.backend.repository.FarmerRepository;
+import com.agrotrade.backend.repository.ConnectionRepository;
+
 import com.agrotrade.backend.service.FarmerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,9 @@ public class FarmerController {
     @Autowired
     private FarmerRepository farmerRepository;
 
+    @Autowired
+    private ConnectionRepository connectionRepository;
+
     // REGISTER FARMER
     @PostMapping("/register")
     public Farmer registerFarmer(
@@ -27,7 +34,6 @@ public class FarmerController {
     ) {
 
         return farmerService.saveFarmer(farmer);
-
     }
 
     // GET ALL FARMERS
@@ -35,75 +41,26 @@ public class FarmerController {
     public List<Farmer> getAllFarmers() {
 
         return farmerRepository.findAll();
-
     }
 
-    // GET FARMER BY ID
-    @GetMapping("/{id}")
-    public Farmer getFarmerById(
-            @PathVariable Long id
+    // GET FARMER CONNECTIONS
+    @GetMapping("/connections/{farmerId}")
+    public List<Connection> getFarmerConnections(
+            @PathVariable Long farmerId
     ) {
 
-        return farmerRepository
-                .findById(id)
-                .orElse(null);
-
+        return connectionRepository
+                .findByFarmerId(farmerId);
     }
 
-    // UPDATE FARMER PROFILE
-    @PutMapping("/{id}")
-    public Farmer updateFarmer(
-            @PathVariable Long id,
-            @RequestBody Farmer updatedFarmer
+    // CONNECTION COUNT
+    @GetMapping("/connection-count/{farmerId}")
+    public int getConnectionCount(
+            @PathVariable Long farmerId
     ) {
 
-        Farmer farmer =
-                farmerRepository
-                        .findById(id)
-                        .orElse(null);
-
-        if (farmer != null) {
-
-            farmer.setFullName(
-                    updatedFarmer.getFullName()
-            );
-
-            farmer.setEmail(
-                    updatedFarmer.getEmail()
-            );
-
-            farmer.setPhone(
-                    updatedFarmer.getPhone()
-            );
-
-            farmer.setCity(
-                    updatedFarmer.getCity()
-            );
-
-            farmer.setState(
-                    updatedFarmer.getState()
-            );
-
-            farmer.setAddress(
-                    updatedFarmer.getAddress()
-            );
-
-            return farmerRepository.save(farmer);
-
-        }
-
-        return null;
-    }
-
-    // DELETE FARMER
-    @DeleteMapping("/{id}")
-    public String deleteFarmer(
-            @PathVariable Long id
-    ) {
-
-        farmerRepository.deleteById(id);
-
-        return "Farmer Deleted Successfully";
-
+        return connectionRepository
+                .findByFarmerId(farmerId)
+                .size();
     }
 }

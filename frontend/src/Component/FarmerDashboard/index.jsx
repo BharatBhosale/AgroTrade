@@ -12,9 +12,11 @@ const FarmerDashboard = ({ setNavSelection }) => {
     monthlyIncome: 0,
   });
 
-  useEffect(() => {
+  const [transactions, setTransactions] = useState([]);
+
+  const fetchDashboard = () => {
     axios
-      .get("http://localhost:8080/api/dashboard/1")
+      .get(`http://localhost:8080/api/dashboard/farmer/${user.id}`)
       .then((response) => {
         console.log(response.data);
 
@@ -23,7 +25,34 @@ const FarmerDashboard = ({ setNavSelection }) => {
       .catch((error) => {
         console.log("Dashboard Error:", error);
       });
+  };
+
+  useEffect(() => {
+    // FIRST LOAD
+    fetchDashboard();
+
+    // AUTO REFRESH EVERY 2 SECONDS
+    const interval = setInterval(() => {
+      fetchDashboard();
+      fetchTransactions();
+    }, 2000);
+
+    // CLEANUP
+    return () => clearInterval(interval);
   }, []);
+
+  // FETCH TRANSACTIONS FOR FARMER
+  const fetchTransactions = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/transactions/farmer/email/${user.email}`,
+      );
+
+      setTransactions(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.log("Fetch Transactions Error:", error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -41,10 +70,10 @@ const FarmerDashboard = ({ setNavSelection }) => {
 
       <div className={styles.stats}>
         <div className={styles.card}>
-          <p>Total Transactions</p>
+  <p>Total Transactions</p>
 
-          <h2>{dashboardData.totalTransactions}</h2>
-        </div>
+  <h2>{transactions.length}</h2>
+</div>
 
         <div className={styles.card}>
           <p>Active Connections</p>
@@ -59,10 +88,18 @@ const FarmerDashboard = ({ setNavSelection }) => {
         </div>
 
         <div className={styles.card}>
-          <p>This Month</p>
+  <p>Total Income</p>
 
-          <h2>₹{dashboardData.monthlyIncome}</h2>
-        </div>
+  <h2>
+    ₹{
+      transactions.reduce(
+        (sum, tx) =>
+          sum + (tx.totalAmount || 0),
+        0
+      )
+    }
+  </h2>
+</div>
       </div>
 
       {/* FEATURES */}
@@ -78,19 +115,15 @@ const FarmerDashboard = ({ setNavSelection }) => {
         </div>
 
         <div
-  className={styles.feature}
-  onClick={() =>
-    setNavSelection("Prices")
-  }
->
-  <div className={styles.icon}>📈</div>
+          className={styles.feature}
+          onClick={() => setNavSelection("Prices")}
+        >
+          <div className={styles.icon}>📈</div>
 
-  <h3>Real-Time Prices</h3>
+          <h3>Real-Time Prices</h3>
 
-  <p>
-    Check live market crop prices
-  </p>
-</div>
+          <p>Check live market crop prices</p>
+        </div>
 
         <div
           className={styles.feature}
@@ -181,6 +214,58 @@ const FarmerDashboard = ({ setNavSelection }) => {
             <button>Contact Trader</button>
           </div>
         </div>
+      </div>
+
+      {/* TRANSACTIONS LIST */}
+      <div className={styles.mlSection}>
+        <h2>📄 Recent Transactions</h2>
+
+        {transactions.length === 0 ? (
+          <p>No Transactions Found</p>
+        ) : (
+          transactions.map((tx) => (
+            <div key={tx.id} className={styles.recCard}>
+              <h3>
+                {tx.crop} — ₹{tx.totalAmount}
+              </h3>
+
+              <p>Quantity: {tx.quantity} kg</p>
+
+              <p>Trader ID: {tx.traderId}</p>
+
+              <div className={styles.btnGroup}>
+                <button
+                  onClick={() => {
+                    const slipHtml = `
+                      <html>
+                        <head>
+                          <title>Transaction Slip</title>
+                          <style>body{font-family:Arial;padding:20px}.card{border:1px solid #ddd;padding:20px;border-radius:8px}</style>
+                        </head>
+                        <body>
+                          <div class="card">
+                            <h2>Transaction Slip</h2>
+                            <p><strong>ID:</strong> ${tx.id}</p>
+                            <p><strong>Crop:</strong> ${tx.crop}</p>
+                            <p><strong>Quantity:</strong> ${tx.quantity} kg</p>
+                            <p><strong>Total:</strong> ₹${tx.totalAmount}</p>
+                          </div>
+                        </body>
+                      </html>`;
+
+                    const win = window.open("", "_blank");
+                    win.document.write(slipHtml);
+                    win.document.close();
+                    win.focus();
+                    win.print();
+                  }}
+                >
+                  📄 Download Slip
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

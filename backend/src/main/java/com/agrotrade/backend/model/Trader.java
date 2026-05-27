@@ -38,6 +38,10 @@ public class Trader {
 
     private Integer totalReviews = 0;
 
+    // NEW FIELD
+    private Integer activeFarmers = 0;
+
+    // ID
     public Long getId() {
         return id;
     }
@@ -46,6 +50,7 @@ public class Trader {
         this.id=id;
     }
 
+    // FULL NAME
     public String getFullName() {
         return fullName;
     }
@@ -54,6 +59,7 @@ public class Trader {
         this.fullName=fullName;
     }
 
+    // BUSINESS
     public String getBusiness() {
         return business;
     }
@@ -62,6 +68,7 @@ public class Trader {
         this.business=business;
     }
 
+    // EMAIL
     public String getEmail() {
         return email;
     }
@@ -70,6 +77,7 @@ public class Trader {
         this.email=email;
     }
 
+    // PHONE
     public String getPhone() {
         return phone;
     }
@@ -78,6 +86,7 @@ public class Trader {
         this.phone=phone;
     }
 
+    // LICENSE
     public String getLicense() {
         return license;
     }
@@ -86,6 +95,7 @@ public class Trader {
         this.license=license;
     }
 
+    // PASSWORD
     public String getPassword() {
         return password;
     }
@@ -94,6 +104,7 @@ public class Trader {
         this.password=password;
     }
 
+    // ADDRESS
     public String getAddress() {
         return address;
     }
@@ -102,6 +113,7 @@ public class Trader {
         this.address=address;
     }
 
+    // CITY
     public String getCity() {
         return city;
     }
@@ -110,6 +122,7 @@ public class Trader {
         this.city=city;
     }
 
+    // STATE
     public String getState() {
         return state;
     }
@@ -118,6 +131,7 @@ public class Trader {
         this.state=state;
     }
 
+    // LATITUDE
     public Double getLatitude() {
         return latitude;
     }
@@ -126,6 +140,7 @@ public class Trader {
         this.latitude=latitude;
     }
 
+    // LONGITUDE
     public Double getLongitude() {
         return longitude;
     }
@@ -134,6 +149,7 @@ public class Trader {
         this.longitude=longitude;
     }
 
+    // CROPS
     public String getCrops() {
         return crops;
     }
@@ -142,6 +158,7 @@ public class Trader {
         this.crops=crops;
     }
 
+    // RATING
     public Integer getRating() {
         return rating;
     }
@@ -150,11 +167,21 @@ public class Trader {
         this.rating=rating;
     }
 
+    // TOTAL REVIEWS
     public Integer getTotalReviews() {
         return totalReviews;
     }
 
     public void setTotalReviews(Integer totalReviews){
         this.totalReviews=totalReviews;
+    }
+
+    // ACTIVE FARMERS
+    public Integer getActiveFarmers() {
+        return activeFarmers;
+    }
+
+    public void setActiveFarmers(Integer activeFarmers) {
+        this.activeFarmers = activeFarmers;
     }
 }

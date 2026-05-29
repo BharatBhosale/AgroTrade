@@ -2,7 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(to right, #d9f3ea, #a8e6cf);
   min-height: 100vh;
 }
 
@@ -150,6 +150,20 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
+.disabledCard {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.disabledBtn {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: not-allowed;
+}
+
 .requestHeader {
   display: flex;
   justify-content: space-between;
@@ -249,6 +263,78 @@
 
 .btnDownload:hover {
   background: #e68900;
+}
+
+.transactionsList {
+  display: grid;
+  gap: 20px;
+}
+
+.txCard {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid black;
+  transition: 0.3s;
+}
+
+.txCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+.txTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.txTop h3 {
+  color: black;
+}
+
+.txBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  align-items: start;
+}
+
+.txBody p {
+  color: black;
+  margin: 0;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.txBody strong {
+  color: #111827;
+}
+
+.downloadBtn {
+  margin-top: 20px;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.downloadBtn:hover {
+  opacity: 0.9;
+}
+
+.transactionsList .status {
+  background: #22c55e;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
 }
 
 /* TRANSACTIONS TABLE */

@@ -26,7 +26,7 @@ const ReviewsPage = ({
   const [review, setReview] =
     useState("");
 
-  // FETCH TRADERS
+  
   useEffect(() => {
 
     axios
@@ -46,7 +46,7 @@ const ReviewsPage = ({
 
   }, []);
 
-  // SUBMIT REVIEW
+  
   const submitReview = async () => {
 
     if (
@@ -137,7 +137,7 @@ const ReviewsPage = ({
           Give Review To Trader
         </h2>
 
-        {/* FARMER NAME */}
+        {}
         <input
           type="text"
           placeholder="Enter Your Name"
@@ -149,7 +149,7 @@ const ReviewsPage = ({
           }
         />
 
-        {/* TRADER SELECT */}
+        {}
         <select
           value={
             selectedTrader
@@ -184,7 +184,7 @@ const ReviewsPage = ({
 
         </select>
 
-        {/* RATING */}
+        {}
         <select
           value={rating}
           onChange={(e) =>
@@ -216,7 +216,7 @@ const ReviewsPage = ({
 
         </select>
 
-        {/* REVIEW */}
+        {}
         <textarea
           placeholder="Write Review"
           value={review}
@@ -227,7 +227,7 @@ const ReviewsPage = ({
           }
         />
 
-        {/* BUTTON */}
+        {}
         <button
           className={styles.submitBtn}
           onClick={submitReview}

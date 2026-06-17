@@ -26,7 +26,7 @@ const Navbar = ({
       </div>
 
       {user ? (
-        // Logged-in user navbar
+        
         <div className="nav-user-info">
           <span className="user-name">{user.full_name || "User"}</span>
           <button className="logout-btn" onClick={handleLogout}>
@@ -34,7 +34,7 @@ const Navbar = ({
           </button>
         </div>
       ) : (
-        // Not logged-in navbar
+        
         <div className="nav-links">
           <button
             className={navSelection === "Home" ? "active" : ""}

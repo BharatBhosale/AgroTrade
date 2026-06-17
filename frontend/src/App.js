@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Navbar from "./Component/Navbar";
 import Sidebar from "./Component/Sidebar";
@@ -30,18 +30,31 @@ import ReportsPage from "./Component/ReportsPage";
 
 import SearchPage from "./pages/SearchPage";
 
-
 function App() {
-  const [navSelection, setNavSelection] = useState("Home");
+  const [navSelection, setNavSelection] = useState(
+    localStorage.getItem("navSelection") || "Home",
+  );
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  // LOGOUT
+  useEffect(() => {
+    localStorage.setItem("navSelection", navSelection);
+  }, [navSelection]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
+
   const handleLogout = () => {
-    localStorage.removeItem("user");
-
     setUser(null);
 
     alert("Logged Out ✅");
@@ -49,10 +62,8 @@ function App() {
     setNavSelection("Home");
   };
 
-  // PAGE ROUTER
   const pages = (nav) => {
     switch (nav) {
-      // HOME
       case "Home":
         return (
           <>
@@ -64,63 +75,48 @@ function App() {
           </>
         );
 
-      // ABOUT
       case "About":
         return <AboutUs />;
 
-      // CONTACT
       case "Contact":
         return <Contact />;
 
-      // LOGIN
       case "Login":
         return <Login setNavSelection={setNavSelection} setUser={setUser} />;
 
-      // FARMER REGISTER
       case "Farmer":
         return <FarmerRegister setNavSelection={setNavSelection} />;
 
-      // TRADER REGISTER
       case "Trader":
         return <TraderRegister setNavSelection={setNavSelection} />;
 
-      // FARMER DASHBOARD
       case "Dashboard":
         return <FarmerDashboard setNavSelection={setNavSelection} />;
 
-      // FARMER SEARCH
       case "FarmerSearchTrader":
         return <FarmerSearchTrader setNavSelection={setNavSelection} />;
 
-      // TRADER DASHBOARD
       case "TraderDashboard":
         return <TraderDashboard setNavSelection={setNavSelection} />;
 
-      // SEARCH PAGE
       case "Search":
         return <SearchPage setNavSelection={setNavSelection} />;
 
-      // PRICES PAGE
       case "Prices":
         return <PricesPage setNavSelection={setNavSelection} />;
 
-      // TRANSACTIONS PAGE
       case "Transactions":
         return <TransactionsPage setNavSelection={setNavSelection} />;
 
-      // REVIEWS PAGE
       case "Reviews":
         return <ReviewsPage setNavSelection={setNavSelection} />;
 
-      // REPORTS PAGE
       case "Reports":
         return <ReportsPage setNavSelection={setNavSelection} />;
 
-      // PROFILE PAGE
       case "Profile":
         return <ProfilePage setNavSelection={setNavSelection} />;
 
-      // FARMER DETAILS PAGE
       case "FarmerDetails":
         return (
           <FarmerDetailsPage
@@ -129,11 +125,9 @@ function App() {
           />
         );
 
-      // TRANSACTION PAGE
       case "Transaction":
         return <Transaction setNavSelection={setNavSelection} />;
 
-      // DEFAULT
       default:
         return (
           <>
@@ -149,7 +143,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* NAVBAR */}
+      {}
 
       <Navbar
         navSelection={navSelection}
@@ -159,20 +153,22 @@ function App() {
         handleLogout={handleLogout}
       />
 
-      {/* SIDEBAR */}
+      {}
 
       <Sidebar
         open={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         navSelection={navSelection}
         setNavSelection={setNavSelection}
+        user={user}
+        handleLogout={handleLogout}
       />
 
-      {/* MAIN CONTENT */}
+      {}
 
       <main className="main-content">{pages(navSelection)}</main>
 
-      {/* FOOTER */}
+      {}
 
       <Footer />
     </div>

@@ -23,14 +23,14 @@ const PricesPage = ({ setNavSelection }) => {
 
       console.log(response.data);
 
-      // FILTER ONLY MAHARASHTRA
+      
       const maharashtraData =
         response.data.records.filter(
           (item) =>
             item.state === "Maharashtra"
         );
 
-      // FORMAT DATA
+      
 const formattedData =
   response.data.records.map((item, index) => ({
 
@@ -44,7 +44,7 @@ const formattedData =
 
     state: item.state,
 
-    // QUINTAL TO KG
+    
     price:
       (
         parseFloat(item.modal_price) / 100
@@ -93,7 +93,7 @@ const formattedData =
   return (
     <div className={styles.page}>
 
-      {/* HEADER */}
+      {}
       <div className={styles.header}>
 
         <h1 className={styles.title}>
@@ -111,7 +111,7 @@ const formattedData =
 
       </div>
 
-      {/* REFRESH BUTTON */}
+      {}
       <button
         className={styles.refreshBtn}
         onClick={fetchPrices}
@@ -119,7 +119,7 @@ const formattedData =
         🔄 Refresh Prices
       </button>
 
-      {/* GRID */}
+      {}
       <div className={styles.grid}>
 
         {prices.map((item) => (
@@ -129,17 +129,17 @@ const formattedData =
             className={styles.card}
           >
 
-            {/* IMAGE */}
+            {}
             <img
               src={item.image}
               alt={item.crop}
               className={styles.image}
             />
 
-            {/* TITLE */}
+            {}
             <h2>{item.crop}</h2>
 
-            {/* DETAILS */}
+            {}
             <p>
               <strong>Market:</strong>
               {" "}
@@ -158,7 +158,7 @@ const formattedData =
               {item.state}
             </p>
 
-            {/* PRICE */}
+            {}
             <div className={styles.priceBox}>
 
               <h1 className={styles.price}>
@@ -171,7 +171,7 @@ const formattedData =
 
             </div>
 
-            {/* MIN MAX */}
+            {}
             <div className={styles.bottom}>
 
               <p className={styles.min}>

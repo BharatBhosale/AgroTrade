@@ -89,7 +89,7 @@ textarea:focus {
   text-decoration: underline;
 }
 
-/* Responsive */
+
 @media (max-width: 600px) {
   .form-card {
     width: 100%;

@@ -10,4 +10,6 @@ public interface FarmerRequestRepository
         extends JpaRepository<FarmerRequest, Long> {
 
     List<FarmerRequest> findByTraderId(Long traderId);
+
+    List<FarmerRequest> findByTraderIdAndStatus(Long traderId, String status);
 }

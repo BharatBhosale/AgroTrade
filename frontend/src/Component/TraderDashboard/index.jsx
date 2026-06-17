@@ -3,8 +3,10 @@ import axios from "axios";
 import styles from "./style.module.css";
 
 const TraderDashboard = ({ setNavSelection }) => {
-  // Safe parsing with fallback to prevent crashes if localStorage is empty
-  const user = useMemo(() => JSON.parse(localStorage.getItem("user")) || {}, []);
+  const user = useMemo(
+    () => JSON.parse(localStorage.getItem("user")) || {},
+    [],
+  );
 
   const [dashboardData, setDashboardData] = useState({
     totalTransactions: 0,
@@ -13,20 +15,17 @@ const TraderDashboard = ({ setNavSelection }) => {
   });
 
   const [farmerRequests, setFarmerRequests] = useState([]);
-  const [acceptedRequests, setAcceptedRequests] = useState([]);
-  const [rejectedRequests, setRejectedRequests] = useState([]);
   const [filteredFarmers, setFilteredFarmers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("requests");
 
-  // DASHBOARD DATA FETCH
   const fetchDashboardData = useCallback(async () => {
     if (!user.id) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/dashboard/trader/${user.id}`
+        `http://localhost:8080/api/dashboard/trader/${user.id}`,
       );
       setDashboardData({
         totalTransactions: response.data.totalTransactions || 0,
@@ -38,27 +37,33 @@ const TraderDashboard = ({ setNavSelection }) => {
     }
   }, [user.id]);
 
-  // FARMER REQUESTS FETCH
   const fetchFarmerRequests = useCallback(async () => {
     if (!user.id) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/farmer-requests/trader/${user.id}`
+        `http://localhost:8080/api/farmer-requests/trader/${user.id}/all`,
       );
       const data = Array.isArray(response.data) ? response.data : [];
-      setFarmerRequests(data);
-      setFilteredFarmers(data);
+      const sorted = [...data].sort((a, b) => {
+        if (a.id != null && b.id != null) {
+          return b.id - a.id;
+        }
+        const aDate = new Date(a.date || a.statusDate || 0).getTime();
+        const bDate = new Date(b.date || b.statusDate || 0).getTime();
+        return bDate - aDate;
+      });
+      setFarmerRequests(sorted);
+      setFilteredFarmers(sorted);
     } catch (error) {
       console.error("Farmer Requests Fetch Error:", error);
     }
   }, [user.id]);
 
-  // TRANSACTIONS FETCH
   const fetchTransactions = useCallback(async () => {
     if (!user.email) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/transactions/trader/email/${user.email}`
+        `http://localhost:8080/api/transactions/trader/email/${user.email}`,
       );
       setTransactions(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -66,12 +71,11 @@ const TraderDashboard = ({ setNavSelection }) => {
     }
   }, [user.email]);
 
-  // REVIEWS FETCH
   const fetchReviews = useCallback(async () => {
     if (!user.email) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/reviews/trader/${user.email}`
+        `http://localhost:8080/api/reviews/trader/${user.email}`,
       );
       setReviews(response.data || []);
     } catch (error) {
@@ -79,14 +83,12 @@ const TraderDashboard = ({ setNavSelection }) => {
     }
   }, [user.email]);
 
-  // COMBINED POLLING ACTION
   const fetchAllData = useCallback(() => {
     fetchDashboardData();
     fetchTransactions();
     fetchReviews();
   }, [fetchDashboardData, fetchTransactions, fetchReviews]);
 
-  // LOAD DATA ON INITIALIZATION & START AUTOMATIC 2s INTERVAL REFRESH LOOP
   useEffect(() => {
     fetchAllData();
     fetchFarmerRequests();
@@ -98,20 +100,20 @@ const TraderDashboard = ({ setNavSelection }) => {
     return () => clearInterval(interval);
   }, [fetchAllData, fetchFarmerRequests]);
 
-  // Refresh farmer requests whenever Requests tab is clicked active
   useEffect(() => {
     if (activeTab === "requests") fetchFarmerRequests();
   }, [activeTab, fetchFarmerRequests]);
 
-  // 🔥 LIVE MATH MEMO: Calculate real average rating dynamically from review array state
   const realAverageRating = useMemo(() => {
     if (!reviews || reviews.length === 0) return "0.0";
-    const totalRatingSum = reviews.reduce((sum, item) => sum + (item.rating || 0), 0);
+    const totalRatingSum = reviews.reduce(
+      (sum, item) => sum + (item.rating || 0),
+      0,
+    );
     const average = totalRatingSum / reviews.length;
-    return average.toFixed(1); 
+    return average.toFixed(1);
   }, [reviews]);
 
-  // FORMAT UTILITIES
   const formatCurrency = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -132,25 +134,77 @@ const TraderDashboard = ({ setNavSelection }) => {
 
   const sortedTransactions = useMemo(() => {
     return [...transactions].sort((a, b) => {
-      const leftDate = new Date(a.transactionDate || a.createdAt || 0).getTime();
-      const rightDate = new Date(b.transactionDate || b.createdAt || 0).getTime();
+      const leftDate = new Date(
+        a.transactionDate || a.createdAt || 0,
+      ).getTime();
+      const rightDate = new Date(
+        b.transactionDate || b.createdAt || 0,
+      ).getTime();
       return rightDate - leftDate;
     });
   }, [transactions]);
 
-  // SEARCH FILTER HANDLER
   const handleSearch = (query) => {
     setSearchQuery(query);
     const filtered = farmerRequests.filter(
       (farmer) =>
         farmer.farmerName?.toLowerCase().includes(query.toLowerCase()) ||
         farmer.crop?.toLowerCase().includes(query.toLowerCase()) ||
-        farmer.location?.toLowerCase().includes(query.toLowerCase())
+        farmer.location?.toLowerCase().includes(query.toLowerCase()),
     );
     setFilteredFarmers(filtered);
   };
 
-  // SECURE IFRAME PRINT ACTION (No Popup-Blocker Bugs)
+  const updateRequestStatus = (id, status) => {
+    setFarmerRequests((prev) =>
+      prev.map((request) =>
+        request.id === id ? { ...request, status } : request,
+      ),
+    );
+    setFilteredFarmers((prev) =>
+      prev.map((request) =>
+        request.id === id ? { ...request, status } : request,
+      ),
+    );
+  };
+
+  const handleAccept = async (request) => {
+    try {
+      await axios.post(
+        `http://localhost:8080/api/farmer-requests/${request.id}/accept`,
+      );
+      updateRequestStatus(request.id, "ACCEPTED");
+      setDashboardData((prev) => ({
+        ...prev,
+        activeFarmers: prev.activeFarmers + 1,
+      }));
+      await fetchFarmerRequests();
+      alert("Request Accepted ✅");
+    } catch (error) {
+      console.error("Accept Error:", error);
+      alert("Error accepting request.");
+    }
+  };
+
+  const handleReject = async (request) => {
+    try {
+      await axios.post(
+        `http://localhost:8080/api/farmer-requests/${request.id}/reject`,
+      );
+      updateRequestStatus(request.id, "REJECTED");
+      await fetchFarmerRequests();
+      alert("Request Rejected ❌");
+    } catch (error) {
+      console.error("Reject Error:", error);
+      alert("Error rejecting request.");
+    }
+  };
+
+  const handleCreateTransaction = (request) => {
+    localStorage.setItem("selectedFarmer", JSON.stringify(request));
+    setNavSelection("Transaction");
+  };
+
   const printTransactionSlip = (tx) => {
     const iframe = document.createElement("iframe");
     iframe.style.position = "fixed";
@@ -239,7 +293,7 @@ const TraderDashboard = ({ setNavSelection }) => {
     <div className={styles.dashboard}>
       <h1 className={styles.title}>🏪 Trader Dashboard</h1>
 
-      {/* TOP CARDS */}
+      {}
       <div className={styles.stats}>
         <div className={styles.card}>
           <p>Total Transactions</p>
@@ -253,8 +307,8 @@ const TraderDashboard = ({ setNavSelection }) => {
 
         <div className={styles.card}>
           <p>Average Rating</p>
-          {/* 🔥 Displays precise computed value from live reviews array */}
-          <h2>⭐ {realAverageRating}</h2> 
+          {}
+          <h2>⭐ {realAverageRating}</h2>
         </div>
 
         <div className={styles.card}>
@@ -263,7 +317,7 @@ const TraderDashboard = ({ setNavSelection }) => {
         </div>
       </div>
 
-      {/* TABS CONTROLLER */}
+      {}
       <div className={styles.tabs}>
         <button
           className={`${styles.tabBtn} ${activeTab === "requests" ? styles.activeTab : ""}`}
@@ -291,84 +345,128 @@ const TraderDashboard = ({ setNavSelection }) => {
         </button>
       </div>
 
-      {/* REQUEST TAB */}
+      {}
       {activeTab === "requests" && (
         <div className={styles.section}>
           <h2>Farmer Requests</h2>
           {farmerRequests.length === 0 ? (
             <p>No Requests Found</p>
           ) : (
-            farmerRequests.map((farmer) => (
-              <div
-                key={farmer.id}
-                className={
-                  localStorage.getItem(`contacted_${farmer.id}`) === "true"
-                    ? `${styles.requestCard} ${styles.disabledCard}`
-                    : styles.requestCard
-                }
-              >
-                <h3>{farmer.farmerName}</h3>
-                <p>🌾 {farmer.crop}</p>
-                <p>📍 {farmer.location}</p>
+            farmerRequests.map((farmer) => {
+              const isPending = farmer.status === "PENDING" || !farmer.status;
+              const isAccepted = farmer.status === "ACCEPTED";
+              const isRejected = farmer.status === "REJECTED";
+              const isCompleted = farmer.status === "COMPLETED";
 
-                <div className={styles.btnGroup}>
-                  {!acceptedRequests.includes(farmer.id) && (
-                    <button
-                      className={styles.acceptBtn}
-                      onClick={async () => {
-                        try {
-                          await axios.post(`http://localhost:8080/api/farmer-requests/${farmer.id}/accept`);
-                          setAcceptedRequests((prev) => [...prev, farmer.id]);
-                          setDashboardData((prev) => ({
-                            ...prev,
-                            activeFarmers: prev.activeFarmers + 1,
-                          }));
-                          alert("Request Accepted ✅");
-                        } catch (error) {
-                          alert("Error processing accept pipeline.");
-                        }
-                      }}
+              return (
+                <div key={farmer.id} className={styles.requestCard}>
+                  <div className={styles.requestHeader}>
+                    <h3>{farmer.farmerName}</h3>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        isAccepted
+                          ? styles.acceptedBadge
+                          : isRejected
+                            ? styles.rejectedBadge
+                            : isCompleted
+                              ? styles.completedBadge
+                              : ""
+                      }`}
                     >
-                      ✅ Accept
-                    </button>
-                  )}
+                      {isAccepted
+                        ? "Accepted"
+                        : isRejected
+                          ? "Rejected"
+                          : isCompleted
+                            ? "Completed"
+                            : "Pending"}
+                    </span>
+                  </div>
 
-                  {!rejectedRequests.includes(farmer.id) && (
-                    <button
-                      className={styles.rejectBtn}
-                      onClick={async () => {
-                        try {
-                          await axios.post(`http://localhost:8080/api/farmer-requests/${farmer.id}/reject`);
-                          setRejectedRequests((prev) => [...prev, farmer.id]);
-                          alert("Request Rejected ❌");
-                        } catch (error) {
-                          alert("Error processing rejection pipeline.");
-                        }
-                      }}
-                    >
-                      ❌ Reject
-                    </button>
-                  )}
+                  <div className={styles.requestInfo}>
+                    <p>🌾 {farmer.crop}</p>
+                    <p>📍 {farmer.location}</p>
+                    <p>📧 {farmer.email}</p>
+                    <p>📞 {farmer.phone}</p>
+                    <p>🗓️ Requested: {formatDate(farmer.date)}</p>
+                    {farmer.statusDate && (
+                      <p>
+                        📌{" "}
+                        {farmer.status === "ACCEPTED"
+                          ? "Accepted on"
+                          : farmer.status === "REJECTED"
+                            ? "Rejected on"
+                            : farmer.status === "COMPLETED"
+                              ? "Completed on"
+                              : "Updated on"}{" "}
+                        {formatDate(farmer.statusDate)}
+                      </p>
+                    )}
+                  </div>
 
-                  <button
-                    className={localStorage.getItem(`contacted_${farmer.id}`) === "true" ? styles.disabledBtn : styles.contactBtn}
-                    disabled={localStorage.getItem(`contacted_${farmer.id}`) === "true"}
-                    onClick={() => {
-                      localStorage.setItem(`contacted_${farmer.id}`, "true");
-                      localStorage.setItem("selectedFarmer", JSON.stringify(farmer));
-                      setNavSelection("Transaction");
-                    }}
-                  >
-                    {localStorage.getItem(`contacted_${farmer.id}`) === "true" ? "✅ Connected" : "📞 Contact"}
-                  </button>
+                  <div className={styles.requestActions}>
+                    {isPending && (
+                      <>
+                        <button
+                          className={styles.acceptBtn}
+                          onClick={() => handleAccept(farmer)}
+                        >
+                          ✅ Accept
+                        </button>
+                        <button
+                          className={styles.rejectBtn}
+                          onClick={() => handleReject(farmer)}
+                        >
+                          ❌ Reject
+                        </button>
+                        <button className={styles.disabledBtn} disabled>
+                          ⏳ Await Approval
+                        </button>
+                      </>
+                    )}
+
+                    {isAccepted && (
+                      <>
+                        <button
+                          className={styles.contactBtn}
+                          onClick={() => handleCreateTransaction(farmer)}
+                        >
+                          💼 Create Transaction
+                        </button>
+                        <button className={styles.disabledBtn} disabled>
+                          ✅ Accepted
+                        </button>
+                      </>
+                    )}
+
+                    {isRejected && (
+                      <button className={styles.disabledBtn} disabled>
+                        🚫 Request Rejected
+                      </button>
+                    )}
+
+                    {isCompleted && (
+                      <button className={styles.disabledBtn} disabled>
+                        ✅ Transaction Completed
+                      </button>
+                    )}
+                  </div>
+
+                  {(isRejected || isCompleted) && (
+                    <p className={styles.statusNote}>
+                      {isRejected
+                        ? "This request has been rejected and remains visible for history."
+                        : "Transaction completed — request is retained for your records."}
+                    </p>
+                  )}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
 
-      {/* TRANSACTIONS TAB */}
+      {}
       {activeTab === "transactions" && (
         <div className={styles.section}>
           <h2>Transactions</h2>
@@ -379,18 +477,35 @@ const TraderDashboard = ({ setNavSelection }) => {
               {sortedTransactions.map((tx) => (
                 <div key={tx.id} className={styles.txCard}>
                   <div className={styles.txTop}>
-                    <h3>{tx.crop} — {formatCurrency(tx.totalAmount)}</h3>
+                    <h3>
+                      {tx.crop} — {formatCurrency(tx.totalAmount)}
+                    </h3>
                     <span className={styles.status}>{tx.status}</span>
                   </div>
                   <div className={styles.txBody}>
-                    <p><strong>Farmer:</strong> {tx.farmerName || `Farmer ${tx.farmerId}`}</p>
-                    <p><strong>Trader:</strong> {tx.traderName || user?.name || user?.email}</p>
-                    <p><strong>Date:</strong> {formatDate(tx.transactionDate)}</p>
-                    <p><strong>Quantity:</strong> {tx.quantity} kg</p>
-                    <p><strong>Transaction ID:</strong> {tx.id}</p>
+                    <p>
+                      <strong>Farmer:</strong>{" "}
+                      {tx.farmerName || `Farmer ${tx.farmerId}`}
+                    </p>
+                    <p>
+                      <strong>Trader:</strong>{" "}
+                      {tx.traderName || user?.name || user?.email}
+                    </p>
+                    <p>
+                      <strong>Date:</strong> {formatDate(tx.transactionDate)}
+                    </p>
+                    <p>
+                      <strong>Quantity:</strong> {tx.quantity} kg
+                    </p>
+                    <p>
+                      <strong>Transaction ID:</strong> {tx.id}
+                    </p>
                   </div>
-                  {/* 🔥 Fixed Print Pipeline Action execution link context */}
-                  <button className={styles.downloadBtn} onClick={() => printTransactionSlip(tx)}>
+                  {}
+                  <button
+                    className={styles.downloadBtn}
+                    onClick={() => printTransactionSlip(tx)}
+                  >
                     🖨️ Print Slip
                   </button>
                 </div>
@@ -400,7 +515,7 @@ const TraderDashboard = ({ setNavSelection }) => {
         </div>
       )}
 
-      {/* SEARCH TAB */}
+      {}
       {activeTab === "search" && (
         <div className={styles.section}>
           <h2>Search Farmers</h2>
@@ -421,7 +536,7 @@ const TraderDashboard = ({ setNavSelection }) => {
         </div>
       )}
 
-      {/* REVIEW TAB */}
+      {}
       {activeTab === "reviews" && (
         <div className={styles.section}>
           <h2>⭐ Farmer Reviews</h2>

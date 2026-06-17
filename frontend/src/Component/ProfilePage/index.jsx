@@ -38,7 +38,7 @@ const ProfilePage = ({
 
     });
 
-  // FETCH PROFILE
+  
   useEffect(() => {
 
     fetchProfile();
@@ -91,7 +91,7 @@ const ProfilePage = ({
     }
   };
 
-  // SAVE PROFILE
+  
   const handleSave = async () => {
 
     try {
@@ -123,7 +123,7 @@ const ProfilePage = ({
   return (
     <div className={styles.page}>
 
-      {/* HEADER */}
+      {}
       <div className={styles.header}>
 
         <h2 className={styles.title}>
@@ -143,10 +143,10 @@ const ProfilePage = ({
 
       </div>
 
-      {/* PROFILE CARD */}
+      {}
       <div className={styles.profileCard}>
 
-        {/* TOP */}
+        {}
         <div className={styles.profileHeader}>
 
           <div className={styles.avatar}>
@@ -169,10 +169,10 @@ const ProfilePage = ({
 
         </div>
 
-        {/* FORM */}
+        {}
         <div className={styles.profileFields}>
 
-          {/* FULL NAME */}
+          {}
           <div>
 
             <label>
@@ -199,7 +199,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* EMAIL */}
+          {}
           <div>
 
             <label>Email</label>
@@ -224,7 +224,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* PHONE */}
+          {}
           <div>
 
             <label>Phone</label>
@@ -249,7 +249,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* CITY */}
+          {}
           <div>
 
             <label>City</label>
@@ -274,7 +274,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* STATE */}
+          {}
           <div>
 
             <label>State</label>
@@ -299,7 +299,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* ADDRESS */}
+          {}
           <div>
 
             <label>Address</label>
@@ -324,7 +324,7 @@ const ProfilePage = ({
 
           </div>
 
-          {/* ACCOUNT */}
+          {}
           <div>
 
             <label>
@@ -343,7 +343,7 @@ const ProfilePage = ({
 
         </div>
 
-        {/* BUTTONS */}
+        {}
         <div className={styles.profileActions}>
 
           {!isEditing ? (

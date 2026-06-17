@@ -11,7 +11,7 @@ const TransactionsPage = ({ setNavSelection }) => {
   const [transactions, setTransactions]
     = useState([]);
 
-  // FETCH TRANSACTIONS
+  
   const fetchTransactions = async () => {
 
     try {
@@ -44,7 +44,7 @@ const TransactionsPage = ({ setNavSelection }) => {
 
     <div className={styles.container}>
 
-      {/* HEADER */}
+      {}
       <div className={styles.header}>
 
         <button

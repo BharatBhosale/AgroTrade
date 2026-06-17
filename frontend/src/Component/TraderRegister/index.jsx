@@ -34,7 +34,7 @@ const TraderRegister = ({ setNavSelection }) => {
     if (!formData.state) newErrors.state = true;
     if (!formData.latitude) newErrors.latitude = true;
     if (!formData.longitude) newErrors.longitude = true;
-    // crops are optional, so no validation required
+    
 
     setErrors(newErrors);
 

@@ -42,7 +42,7 @@
   align-items: start;
 }
 
-/* FARMER INFO SECTION */
+
 .farmerInfo {
   background: white;
   padding: 25px;
@@ -86,7 +86,7 @@
   border-left: 3px solid #27ae60;
 }
 
-/* FORM SECTION */
+
 .form {
   background: white;
   padding: 25px;
@@ -144,7 +144,7 @@
   box-shadow: none;
 }
 
-/* TOTAL AMOUNT HIGHLIGHT */
+
 .totalAmount {
   background: #ecf0f1;
   padding: 20px;
@@ -174,7 +174,7 @@
   text-align: right;
 }
 
-/* SUBMIT BUTTON */
+
 .submitBtn {
   width: 100%;
   padding: 15px;
@@ -199,7 +199,7 @@
   transform: translateY(0);
 }
 
-/* RESPONSIVE DESIGN */
+
 @media (max-width: 768px) {
   .content {
     grid-template-columns: 1fr;

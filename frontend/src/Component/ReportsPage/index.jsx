@@ -35,14 +35,14 @@ const ReportsPage = ({ setNavSelection }) => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Sort transactions so the most recent ones are on top
+  
   const sortedTransactions = useMemo(() => {
     return [...transactions].sort((a, b) => {
       return new Date(b.transactionDate) - new Date(a.transactionDate);
     });
   }, [transactions]);
 
-  // FEATURE: Download ONE single transaction as a text receipt file
+  
   const downloadSingleTransaction = (tx) => {
     const receiptText = `
 =========================================
@@ -83,7 +83,7 @@ Thank you for using our Agri-Platform!
     document.body.removeChild(link);
   };
 
-  // FEATURE: Print via a hidden iframe (Bypasses browser popup blockers completely!)
+  
   const printSingleTransaction = (tx) => {
     const iframe = document.createElement("iframe");
     iframe.style.position = "fixed";
@@ -134,7 +134,7 @@ Thank you for using our Agri-Platform!
     `);
     doc.close();
 
-    // Give layout content a moment to settle, then fire system native print dialogue execution
+    
     setTimeout(() => {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
@@ -144,7 +144,7 @@ Thank you for using our Agri-Platform!
 
   return (
     <div className={styles.container}>
-      {/* HEADER */}
+      {}
       <div className={styles.header}>
         <button
           className={styles.backBtn}
@@ -157,7 +157,7 @@ Thank you for using our Agri-Platform!
         <h1 className={styles.title}>📄 Generate Reports</h1>
       </div>
 
-      {/* CARD CONTENT LAYOUT */}
+      {}
       {loading ? (
         <div className={styles.loading}>Loading Transactions...</div>
       ) : transactions.length === 0 ? (

@@ -15,7 +15,6 @@ const Transaction = ({ setNavSelection }) => {
     cut: 0,
   });
 
-  // Calculate total amount
   const calculateTotal = () => {
     const baseAmount = (formData.quantity || 0) * (formData.rate || 0);
     const chargesAmount = formData.charges || 0;
@@ -41,52 +40,44 @@ const Transaction = ({ setNavSelection }) => {
     }
 
     try {
-      // Prepare transaction data
-     const transactionData = {
+      const transactionData = {
+        farmerId: farmer.farmerId || farmer.id,
+        farmerName: farmer.farmerName,
+        farmerEmail: farmer.email,
 
-  // FARMER
-  farmerId: farmer.id,
+        traderId: user.id,
+        traderName: user.name,
+        traderEmail: user.email,
 
-  farmerName: farmer.farmerName,
+        crop: formData.crop,
+        quantity: formData.quantity,
+        rate: formData.rate,
+        baseAmount: formData.quantity * formData.rate,
+        charges: formData.charges,
+        cut: formData.cut,
+        totalAmount: calculateTotal(),
+        status: "Completed",
+      };
 
-  farmerEmail: farmer.email,
-
-  // TRADER
-  traderId: user.id,
-
-  traderName: user.name,
-
-  traderEmail: user.email,
-
-  // TRANSACTION
-  crop: formData.crop,
-
-  quantity: formData.quantity,
-
-  rate: formData.rate,
-
-  baseAmount:
-    formData.quantity * formData.rate,
-
-  charges: formData.charges,
-
-  cut: formData.cut,
-
-  totalAmount: calculateTotal(),
-
-  status: "Completed",
-};
-
-      // Save transaction to backend
       const response = await axios.post(
         "http://localhost:8080/api/transactions/create",
         transactionData,
       );
 
+      if (farmer?.id) {
+        try {
+          await axios.post(
+            `http://localhost:8080/api/farmer-requests/${farmer.id}/complete`,
+          );
+        } catch (updateError) {
+          console.warn("Unable to mark request completed:", updateError);
+        }
+      }
+
       alert("Transaction Created Successfully ✅");
       console.log("Transaction Response:", response.data);
 
-      // Go back to dashboard
+      localStorage.removeItem("selectedFarmer");
       setNavSelection("TraderDashboard");
     } catch (error) {
       console.error("Transaction Error:", error);
@@ -120,7 +111,7 @@ const Transaction = ({ setNavSelection }) => {
       </div>
 
       <div className={styles.content}>
-        {/* FARMER INFO SECTION */}
+        {}
         <div className={styles.farmerInfo}>
           <h2>👨‍🌾 Farmer Information</h2>
           <div className={styles.infoGrid}>
@@ -143,11 +134,11 @@ const Transaction = ({ setNavSelection }) => {
           </div>
         </div>
 
-        {/* TRANSACTION FORM */}
+        {}
         <form className={styles.form} onSubmit={handleSubmit}>
           <h2>📋 Transaction Details</h2>
 
-          {/* CROP */}
+          {}
           <div className={styles.formGroup}>
             <label>Crop *</label>
             <input
@@ -160,7 +151,7 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* QUANTITY */}
+          {}
           <div className={styles.formGroup}>
             <label>Quantity (kg) *</label>
             <input
@@ -175,7 +166,7 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* RATE/PRICE */}
+          {}
           <div className={styles.formGroup}>
             <label>Rate (₹/kg) *</label>
             <input
@@ -190,7 +181,7 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* BASE AMOUNT (AUTO) */}
+          {}
           <div className={styles.formGroup}>
             <label>Base Amount (₹)</label>
             <input
@@ -201,7 +192,7 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* CHARGES */}
+          {}
           <div className={styles.formGroup}>
             <label>Charges (₹)</label>
             <input
@@ -215,7 +206,7 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* CUT/DEDUCTION */}
+          {}
           <div className={styles.formGroup}>
             <label>Cut/Deduction (₹)</label>
             <input
@@ -229,13 +220,13 @@ const Transaction = ({ setNavSelection }) => {
             />
           </div>
 
-          {/* TOTAL AMOUNT */}
+          {}
           <div className={styles.totalAmount}>
             <label>Total Amount (₹)</label>
             <div className={styles.totalValue}>₹{totalAmount.toFixed(2)}</div>
           </div>
 
-          {/* SUBMIT BUTTON */}
+          {}
           <button type="submit" className={styles.submitBtn}>
             💾 Create Transaction
           </button>

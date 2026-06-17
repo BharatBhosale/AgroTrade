@@ -9,7 +9,7 @@ const parseCoordinate = (value) => {
 
 const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
   const toRad = (value) => (value * Math.PI) / 180;
-  const R = 6371; // Earth radius in kilometers
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -54,6 +54,14 @@ const FarmerSearchTrader = ({ setNavSelection }) => {
           setLocationMessage(
             "Using your current location to show nearby traders.",
           );
+          localStorage.setItem(
+            "farmerSearchLatitude",
+            pos.coords.latitude.toString(),
+          );
+          localStorage.setItem(
+            "farmerSearchLongitude",
+            pos.coords.longitude.toString(),
+          );
         },
         (err) => {
           console.log("Geolocation error:", err);
@@ -96,6 +104,8 @@ const FarmerSearchTrader = ({ setNavSelection }) => {
 
     setFarmerLocation({ latitude, longitude });
     setLocationMessage("Using entered coordinates to show nearby traders.");
+    localStorage.setItem("farmerSearchLatitude", latitude.toString());
+    localStorage.setItem("farmerSearchLongitude", longitude.toString());
   };
 
   const handleFindTraders = () => {
@@ -105,6 +115,15 @@ const FarmerSearchTrader = ({ setNavSelection }) => {
       );
       return;
     }
+
+    localStorage.setItem(
+      "farmerSearchLatitude",
+      farmerLocation.latitude.toString(),
+    );
+    localStorage.setItem(
+      "farmerSearchLongitude",
+      farmerLocation.longitude.toString(),
+    );
 
     const lowerCrop = cropText.toLowerCase().trim();
 
@@ -150,6 +169,7 @@ const FarmerSearchTrader = ({ setNavSelection }) => {
     }
 
     const contactRequest = {
+      farmerId: farmer?.id,
       farmerName: farmer.full_name || "Unknown Farmer",
       email: farmer.email || "N/A",
       phone: farmer.phone || "N/A",
@@ -161,7 +181,6 @@ const FarmerSearchTrader = ({ setNavSelection }) => {
     };
 
     try {
-      // Send request to backend
       await axios.post(
         "http://localhost:8080/api/farmer-requests/create",
         contactRequest,

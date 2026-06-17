@@ -35,33 +35,23 @@ const Login = ({ setNavSelection, setUser }) => {
 
       console.log("LOGIN RESPONSE:", response.data);
 
-      // SAVE FULL USER DATA
-      localStorage.setItem("user", JSON.stringify(response.data));
+      const userData = response.data;
 
-      // SAVE USER STATE
-      setUser(response.data);
-
-      // FARMER LOGIN
-      if (response.data.role === "farmer") {
+      if (userData.role === "farmer") {
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
         alert("Farmer Login Successful ✅");
-
         setNavSelection("Dashboard");
-      }
-
-      // TRADER LOGIN
-      else if (response.data.role === "trader") {
+      } else if (userData.role === "trader") {
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
         alert("Trader Login Successful ✅");
-
         setNavSelection("TraderDashboard");
-      }
-
-      // INVALID LOGIN
-      else {
+      } else {
         alert("Invalid Email or Password ❌");
       }
     } catch (error) {
       console.log("LOGIN ERROR:", error);
-
       alert("Server Error ❌");
     }
   };
@@ -74,7 +64,7 @@ const Login = ({ setNavSelection, setUser }) => {
         <h3>Welcome Back</h3>
 
         <div className="login-grid">
-          {/* EMAIL */}
+          {}
           <div>
             <label>Email Address</label>
 
@@ -92,7 +82,7 @@ const Login = ({ setNavSelection, setUser }) => {
             {errors.email && <span className="error">Required</span>}
           </div>
 
-          {/* PASSWORD */}
+          {}
           <div>
             <label>Password</label>
 
@@ -112,12 +102,12 @@ const Login = ({ setNavSelection, setUser }) => {
           </div>
         </div>
 
-        {/* LOGIN BUTTON */}
+        {}
         <button className="login-btn" onClick={handleSubmit}>
           Login
         </button>
 
-        {/* FARMER SIGNUP */}
+        {}
         <p className="switch">
           Don't have an account?{" "}
           <span className="farmer" onClick={() => setNavSelection("Farmer")}>

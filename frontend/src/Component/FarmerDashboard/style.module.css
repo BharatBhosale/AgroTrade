@@ -4,7 +4,7 @@
   padding: 20px 40px;
 }
 
-/* HEADER */
+
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
@@ -34,12 +34,12 @@
   background: #dc2626;
 }
 
-/* TITLE */
+
 .title {
   margin-top: 20px;
 }
 
-/* STATS */
+
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -54,7 +54,7 @@
   box-shadow: 0 6px 15px rgba(0,0,0,0.08);
 }
 
-/* FEATURES */
+
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -75,7 +75,31 @@
   transform: translateY(-6px);
 }
 
-/* ML SECTION */
+@media (max-width: 1024px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard {
+    padding: 20px 18px 20px 18px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendations {
+    flex-direction: column;
+  }
+}
+
+
 .mlSection {
   margin-top: 40px;
   background: #16a34a;
@@ -110,4 +134,17 @@
 
 .recCard button:hover {
   background: #f1f5f9;
+}
+
+.scoreBadge {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.loadingText,
+.errorText,
+.emptyText {
+  margin-top: 12px;
+  font-size: 14px;
 }

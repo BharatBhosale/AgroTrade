@@ -17,6 +17,9 @@ public class FarmerRequest {
     private String location;
     private String date;
 
+    private Long farmerId;
+    private String status = "PENDING";
+
     private Long traderId;
 
     public Long getId() {
@@ -81,6 +84,32 @@ public class FarmerRequest {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public Long getFarmerId() {
+        return farmerId;
+    }
+
+    public void setFarmerId(Long farmerId) {
+        this.farmerId = farmerId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private String statusDate;
+
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
     }
 
     public Long getTraderId() {

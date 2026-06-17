@@ -48,6 +48,13 @@ public class FarmerRequestController {
     public List<FarmerRequest> getTraderRequests(
             @PathVariable Long traderId) {
 
+        return farmerRequestRepository.findByTraderIdAndStatus(traderId, "PENDING");
+    }
+
+    @GetMapping("/trader/{traderId}/all")
+    public List<FarmerRequest> getTraderRequestsAll(
+            @PathVariable Long traderId) {
+
         return farmerRequestRepository.findByTraderId(traderId);
     }
 
@@ -60,7 +67,9 @@ public class FarmerRequestController {
 
         // resolve farmer id by email
         Long farmerId = null;
-        if (request.getEmail() != null) {
+        if (request.getFarmerId() != null) {
+            farmerId = request.getFarmerId();
+        } else if (request.getEmail() != null) {
             Farmer farmer = farmerRepository.findByEmail(request.getEmail());
             if (farmer != null) farmerId = farmer.getId();
         }
@@ -104,32 +113,22 @@ public class FarmerRequestController {
             System.out.println("Failed to update trader activeFarmers: " + ex.getMessage());
         }
 
-        farmerRequestRepository.deleteById(id);
+        request.setStatus("ACCEPTED");
+        request.setStatusDate(java.time.LocalDate.now().toString());
+        farmerRequestRepository.save(request);
 
         return saved;
     }
 
     @PostMapping("/{id}/reject")
-    public String rejectRequest(@PathVariable Long id) {
+    public FarmerRequest rejectRequest(@PathVariable Long id) {
 
-        // load request to know trader id
-        FarmerRequest request = farmerRequestRepository.findById(id).orElse(null);
-        if (request != null && request.getTraderId() != null) {
-            try {
-                Trader traderEntity = traderRepository.findById(request.getTraderId()).orElse(null);
-                if (traderEntity != null) {
-                    Integer curr = traderEntity.getActiveFarmers() != null ? traderEntity.getActiveFarmers() : 0;
-                    if (curr > 0) curr = curr - 1;
-                    traderEntity.setActiveFarmers(curr);
-                    traderRepository.save(traderEntity);
-                }
-            } catch (Exception ex) {
-                System.out.println("Failed to decrement trader activeFarmers: " + ex.getMessage());
-            }
-        }
+        FarmerRequest request = farmerRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
 
-        farmerRequestRepository.deleteById(id);
-        return "Request Rejected";
+        request.setStatus("REJECTED");
+        request.setStatusDate(java.time.LocalDate.now().toString());
+        return farmerRequestRepository.save(request);
     }
 
     @DeleteMapping("/{id}")
@@ -137,5 +136,15 @@ public class FarmerRequestController {
 
         farmerRequestRepository.deleteById(id);
         return "Request Deleted";
+    }
+
+    @PostMapping("/{id}/complete")
+    public FarmerRequest completeRequest(@PathVariable Long id) {
+        FarmerRequest request = farmerRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        request.setStatus("COMPLETED");
+        request.setStatusDate(java.time.LocalDate.now().toString());
+        return farmerRequestRepository.save(request);
     }
 }

@@ -1,10 +1,68 @@
-.page{
-background:white;
-padding:40px;
-border-radius:8px;
-box-shadow:0 5px 15px rgba(0,0,0,0.05);
+.aboutContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #f4fcf6;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(17, 97, 47, 0.12);
+  color: #1f3920;
 }
 
-.page h1{
-margin-bottom:20px;
+.aboutContainer h1 {
+  font-size: 2.8rem;
+  margin-bottom: 18px;
+  color: #1b4f2d;
+}
+
+.aboutDescription {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 32px;
+  max-width: 860px;
+}
+
+.aboutSection {
+  margin-bottom: 30px;
+}
+
+.aboutSection h2 {
+  font-size: 1.7rem;
+  color: #226534;
+  margin-bottom: 14px;
+}
+
+.aboutSection p {
+  color: #2d4f31;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.featureList li {
+  background: #e5f8ea;
+  padding: 14px 18px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(32, 104, 44, 0.08);
+}
+
+@media (max-width: 768px) {
+  .aboutContainer {
+    padding: 28px;
+  }
+
+  .aboutContainer h1 {
+    font-size: 2.2rem;
+  }
+
+  .featureList {
+    grid-template-columns: 1fr;
+  }
 }

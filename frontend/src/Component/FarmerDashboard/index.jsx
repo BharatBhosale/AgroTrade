@@ -3,7 +3,7 @@ import axios from "axios";
 import styles from "./style.module.css";
 
 const FarmerDashboard = ({ setNavSelection }) => {
-  // Safe parsing with fallback to prevent crashes if localStorage is empty
+  
   const user = useMemo(() => JSON.parse(localStorage.getItem("user")) || {}, []);
 
   const [dashboardData, setDashboardData] = useState({
@@ -13,8 +13,10 @@ const FarmerDashboard = ({ setNavSelection }) => {
   });
 
   const [transactions, setTransactions] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState("");
 
-  // Wrapped in useCallback to prevent unnecessary re-creations
   const fetchDashboard = useCallback(() => {
     if (!user.id) return;
     axios
@@ -39,44 +41,72 @@ const FarmerDashboard = ({ setNavSelection }) => {
     }
   }, [user.email]);
 
-  // Combined fetch function for polling clarity
+  
   const fetchAllData = useCallback(() => {
     fetchDashboard();
     fetchTransactions();
   }, [fetchDashboard, fetchTransactions]);
 
-  useEffect(() => {
-    // 1. Load everything immediately on component mount
-    fetchAllData();
+  const fetchRecommendations = useCallback(async () => {
+    if (!user.id) return;
 
-    // 2. Safely setup auto-refresh every 2 seconds
+    try {
+      setRecommendationsLoading(true);
+      setRecommendationsError("");
+
+      const response = await fetch(
+        `http://localhost:8080/api/ml/recommendations/farmer/${user.id}?limit=3&t=${Date.now()}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch recommendations");
+      }
+
+      const data = await response.json();
+      setRecommendations(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Recommendations Error:", error);
+      setRecommendationsError(
+        "Unable to load recommendations. Please try again later."
+      );
+    } finally {
+      setRecommendationsLoading(false);
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchAllData();
+    fetchRecommendations();
+
     const interval = setInterval(() => {
       fetchAllData();
     }, 2000);
 
-    // 3. Cleanup to prevent memory leaks when navigating away
     return () => clearInterval(interval);
-  }, [fetchAllData]);
+  }, [fetchAllData, fetchRecommendations]);
 
-  // Memoize total income calculation so it only runs when transactions change
+  
   const totalIncome = useMemo(() => {
     return transactions.reduce((sum, tx) => sum + (tx.totalAmount || 0), 0);
   }, [transactions]);
 
-  // Safely get the amount of the most recent transaction
+  
   const lastTransactionAmount = useMemo(() => {
     if (transactions.length === 0) return 0;
-    // Assumes the last item in the array is the most recent, or adjust based on API sorting
+    
     const lastTx = transactions[transactions.length - 1];
     return lastTx?.totalAmount || 0;
   }, [transactions]);
 
   return (
     <div className={styles.dashboard}>
-      {/* HEADER SECTION */}
+      {}
       <h1 className={styles.title}>Farmer Dashboard</h1>
 
-      {/* TOP STATS */}
+      {}
       <div className={styles.stats}>
         <div className={styles.card}>
           <p>Total Transactions</p>
@@ -99,7 +129,7 @@ const FarmerDashboard = ({ setNavSelection }) => {
         </div>
       </div>
 
-      {/* FEATURES */}
+      {}
       <div className={styles.features}>
         <div className={styles.feature} onClick={() => setNavSelection("FarmerSearchTrader")}>
           🔍 <h3>Search Traders</h3>
@@ -133,38 +163,46 @@ const FarmerDashboard = ({ setNavSelection }) => {
         </div>
       </div>
 
-      {/* ML SECTION */}
+      {}
       <div className={styles.mlSection}>
         <h2>🎯 ML-Powered Recommendations</h2>
         <p>Get personalized trader recommendations based on performance, ratings and history.</p>
 
         <div className={styles.recommendations}>
-          <div className={styles.recCard}>
-            <h3>Raj Trading Co.</h3>
-            <p>⭐ 4.8 rating</p>
-            <p>156 transactions</p>
-            <p>Rice & Wheat</p>
-            <p>2.3 km away</p>
-            <button>Contact Trader</button>
-          </div>
+          {recommendationsLoading && (
+            <p className={styles.loadingText}>Loading smart recommendations...</p>
+          )}
 
-          <div className={styles.recCard}>
-            <h3>Krishna Exports</h3>
-            <p>⭐ 4.9 rating</p>
-            <p>203 transactions</p>
-            <p>Vegetables</p>
-            <p>4.1 km away</p>
-            <button>Contact Trader</button>
-          </div>
+          {recommendationsError && (
+            <p className={styles.errorText}>{recommendationsError}</p>
+          )}
 
-          <div className={styles.recCard}>
-            <h3>Mahesh Traders</h3>
-            <p>⭐ 4.7 rating</p>
-            <p>134 transactions</p>
-            <p>Fruits</p>
-            <p>5.8 km away</p>
-            <button>Contact Trader</button>
-          </div>
+          {!recommendationsLoading && !recommendationsError && recommendations.length === 0 && (
+            <p className={styles.emptyText}>
+              No recommendations available yet. Add traders, reviews, or transactions to improve recommendations.
+            </p>
+          )}
+
+          {!recommendationsLoading && !recommendationsError && recommendations.map((rec) => (
+            <div key={rec.traderId} className={styles.recCard}>
+              <h3>{rec.business || rec.traderName}</h3>
+              <p>Rating: {Number(rec.rating || 0).toFixed(1)} ⭐ ({rec.totalReviews || 0} reviews)</p>
+              <p>Crops: {rec.crops || "N/A"}</p>
+              <p>Location: {rec.city || "Unknown"}, {rec.state || "Unknown"}</p>
+              <p>Transactions: {rec.transactionCount ?? 0}</p>
+              <p>Active Farmers: {rec.activeFarmers ?? 0}</p>
+              <p>Match Score: {Math.round(rec.matchScore ?? 0)}%</p>
+              <p>{rec.reason}</p>
+              <button
+                onClick={() => {
+                  localStorage.setItem("selectedTrader", JSON.stringify(rec));
+                  setNavSelection("FarmerSearchTrader");
+                }}
+              >
+                View Trader
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
